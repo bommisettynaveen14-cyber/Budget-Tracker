@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker</title>
+    <meta name="description" content="Offline Budget Tracker - Manage your finances anywhere">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#2196F3">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232196F3'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.63 1.32 2.67 1.78 2.34.53 4.18 1.43 4.18 3.92-.01 1.96-1.62 3.16-3.96 3.46z'/%3E%3C/svg%3E">
+    
+    <!-- Chart.js Library for offline charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="app-title" data-i18n="app_title">Budget Tracker</h1>
+            <div class="header-actions">
+                <button class="icon-btn" id="langToggle" title="Toggle Language" aria-label="Toggle Language">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                        <path d="M13 2h3a2 2 0 0 1 2 2v1"/>
+                        <path d="M13 3v7h7"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="themeToggle" title="Toggle Theme" aria-label="Toggle Theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="menuToggle" title="Menu" aria-label="Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation -->
+    <nav class="main-nav" id="mainNav">
+        <button class="nav-btn active" data-tab="dashboard" data-i18n="nav_dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="transactions" data-i18n="nav_transactions">Transactions</button>
+        <button class="nav-btn" data-tab="categories" data-i18n="nav_categories">Categories</button>
+        <button class="nav-btn" data-tab="charts" data-i18n="nav_charts">Charts</button>
+        <button class="nav-btn" data-tab="settings" data-i18n="nav_settings">Settings</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Tab -->
+        <section id="dashboard" class="tab-content active">
+            <div class="balance-cards">
+                <div class="balance-card income">
+                    <div class="balance-icon">💰</div>
+                    <div class="balance-info">
+                        <h3 data-i18n="total_income">Total Income</h3>
+                        <p class="balance-amount" id="totalIncome">₹0</p>
+                    </div>
+                </div>
+                <div class="balance-card expense">
+                    <div class="balance-icon">💸</div>
+                    <div class="balance-info">
+                        <h3 data-i18n="total_expenses">Total Expenses</h3>
+                        <p class="balance-amount" id="totalExpenses">₹0</p>
+                    </div>
+                </div>
+                <div class="balance-card balance">
+                    <div class="balance-icon">💳</div>
+                    <div class="balance-info">
+                        <h3 data-i18n="current_balance">Current Balance</h3>
+                        <p class="balance-amount" id="currentBalance">₹0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="budget-section">
+                <div class="section-header">
+                    <h2 data-i18n="budget_limits">Budget Limits</h2>
+                    <button class="btn-secondary" id="setBudgetBtn" data-i18n="set_budget">Set Budget</button>
+                </div>
+                <div class="budget-progress" id="budgetProgress">
+                    <p data-i18n="no_budget_set">No budget limits set</p>
+                </div>
+            </div>
+
+            <div class="quick-stats">
+                <div class="section-header">
+                    <h2 data-i18n="quick_stats">Quick Stats</h2>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-info">
+                            <h4 data-i18n="this_month">This Month</h4>
+                            <p class="stat-value" id="thisMonthExpenses">₹0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-info">
+                            <h4 data-i18n="avg_daily">Daily Average</h4>
+                            <p class="stat-value" id="dailyAverage">₹0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <h4 data-i18n="top_category">Top Category</h4>
+                            <p class="stat-value" id="topCategory">None</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-transactions">
+                <div class="section-header">
+                    <h2 data-i18n="recent_transactions">Recent Transactions</h2>
+                    <button class="btn-link" id="viewAllTransactions" data-i18n="view_all">View All</button>
+                </div>
+                <div class="transaction-list" id="recentTransactionsList">
+                    <div class="empty-state">
+                        <p data-i18n="no_transactions">No transactions yet. Add your first transaction!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transactions Tab -->
+        <section id="transactions" class="tab-content">
+            <!-- Enhanced Filter Section -->
+            <div class="filter-controls-section" style="margin-bottom: 1rem;">
+                <div class="section-header">
+                    <h2 data-i18n="filter_view">Filter View</h2>
+                    <div class="filter-mode-toggle">
+                        <button id="monthModeBtn" class="btn-secondary active" style="margin-right: 0.5rem;">Monthly</button>
+                        <button id="customRangeBtn" class="btn-secondary">Custom Range</button>
+                    </div>
+                </div>
+                
+                <!-- Monthly Filter -->
+                <div id="monthFilterSection" class="filter-section" style="display: block; margin-top: 1rem;">
+                    <div class="month-selector">
+                        <select id="monthFilter" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius); background-color: var(--bg-primary); color: var(--text-primary);">
+                            <option value="all">All Time</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Custom Date Range Filter -->
+                <div id="customRangeSection" class="filter-section" style="display: none; margin-top: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.25rem; font-weight: 500;">From Date:</label>
+                            <input type="date" id="customFromDate" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius); background-color: var(--bg-primary); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.25rem; font-weight: 500;">To Date:</label>
+                            <input type="date" id="customToDate" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius); background-color: var(--bg-primary); color: var(--text-primary);">
+                        </div>
+                        <div>
+                            <button id="applyCustomRange" class="btn-primary" style="margin-top: 1.5rem;">Apply</button>
+                            <button id="clearCustomRange" class="btn-secondary" style="margin-top: 1.5rem; margin-left: 0.5rem;">Clear</button>
+                        </div>
+                    </div>
+                    <div id="customRangeSummary" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+                        <!-- Custom range summary will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Summary Cards -->
+            <div id="monthlySummary" class="balance-cards" style="margin-bottom: 2rem; display: none;">
+                <div class="balance-card income">
+                    <div class="balance-icon">💰</div>
+                    <div class="balance-info">
+                        <h3 data-i18n="monthly_income">Monthly Income</h3>
+                        <p class="balance-amount" id="monthlyIncome">₹0</p>
+                    </div>
+                </div>
+                <div class="balance-card expense">
+                    <div class="balance-icon">💸</div>
+                    <div class="balance-info">
+                        <h3 data-i18n="monthly_expenses">Monthly Expenses</h3>
+                        <p class="balance-amount" id="monthlyExpenses">₹0</p>
+                    </div>
+                </div>
+                <div class="balance-card balance">
+                    <div class="balance-icon">📊</div>
+                    <div class="balance-info">
+                        <h3 data-i18n="monthly_balance">Net Balance</h3>
+                        <p class="balance-amount" id="monthlyBalance">₹0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category-wise Summary -->
+            <div id="categorySummarySection" class="section" style="margin-bottom: 2rem; display: none;">
+                <div class="section-header">
+                    <h2 data-i18n="category_summary">Category Summary</h2>
+                </div>
+                <div id="categorySummaryGrid" class="stats-grid">
+                    <!-- Category summary cards will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Category Totals for Filtered View -->
+            <div id="categoryTotalsSection" class="section" style="margin-bottom: 2rem; display: none;">
+                <div class="section-header">
+                    <h2>Category Totals</h2>
+                </div>
+                <div id="categoryTotalsGrid" class="stats-grid">
+                    <!-- Category totals will be populated here -->
+                </div>
+            </div>
+
+            <!-- Daily Totals -->
+            <div id="dailyTotalsSection" class="section" style="margin-bottom: 2rem; display: none;">
+                <div class="section-header">
+                    <h2 data-i18n="daily_totals">Daily Totals</h2>
+                </div>
+                <div id="dailyTotalsList" class="transaction-list">
+                    <!-- Daily totals will be populated here -->
+                </div>
+            </div>
+
+            <div class="search-filter-bar">
+                <div class="search-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="searchTransactions" placeholder="Search transactions..." data-i18n-placeholder="search_placeholder">
+                </div>
+                <button class="filter-btn" id="filterBtn" title="Filter" aria-label="Filter">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="filter-panel" id="filterPanel">
+                <div class="filter-group">
+                    <label data-i18n="filter_category">Category:</label>
+                    <select id="filterCategory">
+                        <option value="" data-i18n="all_categories">All Categories</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label data-i18n="filter_date_from">From:</label>
+                    <input type="date" id="filterDateFrom">
+                </div>
+                <div class="filter-group">
+                    <label data-i18n="filter_date_to">To:</label>
+                    <input type="date" id="filterDateTo">
+                </div>
+                <div class="filter-actions">
+                    <button class="btn-secondary" id="clearFilters" data-i18n="clear_filters">Clear</button>
+                    <button class="btn-primary" id="applyFilters" data-i18n="apply_filters">Apply</button>
+                </div>
+            </div>
+
+            <div class="transaction-list" id="transactionsList">
+                <div class="empty-state">
+                    <p data-i18n="no_transactions">No transactions found</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Tab -->
+        <section id="categories" class="tab-content">
+            <div class="section-header">
+                <h2 data-i18n="manage_categories">Manage Categories</h2>
+                <button class="btn-primary" id="addCategoryBtn" data-i18n="add_category">Add Category</button>
+            </div>
+            
+            <!-- Monthly Spending Overview -->
+            <div class="section" style="margin-bottom: 2rem;">
+                <div class="section-header">
+                    <h2 data-i18n="monthly_spending_overview">Monthly Spending Overview</h2>
+                    <div class="view-toggle">
+                        <button id="showLastSixMonthsBtn" class="btn-secondary active">Last 6 Months</button>
+                        <button id="showAllMonthsBtn" class="btn-secondary" style="margin-left: 0.5rem;">All Time</button>
+                    </div>
+                </div>
+                <div id="monthlySpendingGrid" class="stats-grid">
+                    <!-- Monthly spending cards will be populated here -->
+                </div>
+            </div>
+            
+            <div class="categories-grid" id="categoriesGrid">
+                <div class="empty-state">
+                    <p data-i18n="no_categories">No categories yet. Create your first category!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Tab -->
+        <section id="charts" class="tab-content">
+            <div class="chart-controls">
+                <div class="chart-time-range">
+                    <label data-i18n="time_range">Time Range:</label>
+                    <select id="chartTimeRange">
+                        <option value="7" data-i18n="last_7_days">Last 7 Days</option>
+                        <option value="30" data-i18n="last_30_days" selected>Last 30 Days</option>
+                        <option value="90" data-i18n="last_3_months">Last 3 Months</option>
+                        <option value="365" data-i18n="last_year">Last Year</option>
+                    </select>
+                </div>
+                <div class="chart-month-filter" style="margin-left: 2rem;">
+                    <label data-i18n="chart_month_filter">Month:</label>
+                    <select id="chartMonthFilter">
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+            </div>
+            <div class="charts-container">
+                <div class="chart-section">
+                    <h2 data-i18n="expense_distribution">Expense Distribution</h2>
+                    <div class="chart-container">
+                        <canvas id="pieChart" width="300" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="chart-section">
+                    <h2 data-i18n="category_spending">Category Spending</h2>
+                    <div class="chart-container">
+                        <canvas id="categoryBarChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="chart-section">
+                    <h2 data-i18n="monthly_summary">Monthly Summary</h2>
+                    <div class="chart-container">
+                        <canvas id="barChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="chart-section">
+                    <h2 data-i18n="spending_trends">Spending Trends</h2>
+                    <div class="chart-container">
+                        <canvas id="lineChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="chart-section">
+                    <h2 data-i18n="daily_expenses">Daily Expenses</h2>
+                    <div class="chart-container">
+                        <canvas id="dailyExpensesChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Tab -->
+        <section id="settings" class="tab-content">
+            <div class="settings-group">
+                <h2 data-i18n="appearance">Appearance</h2>
+                <div class="setting-item">
+                    <label data-i18n="theme">Theme:</label>
+                    <select id="themeSelect">
+                        <option value="auto" data-i18n="theme_auto">Auto</option>
+                        <option value="light" data-i18n="theme_light">Light</option>
+                        <option value="dark" data-i18n="theme_dark">Dark</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label data-i18n="language">Language:</label>
+                    <select id="languageSelect">
+                        <option value="en">English</option>
+                        <option value="te">తెలుగు</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h2 data-i18n="preferences">Preferences</h2>
+                <div class="setting-item">
+                    <label data-i18n="daily_reminder">Daily Reminder:</label>
+                    <input type="checkbox" id="dailyReminder" checked>
+                </div>
+                <div class="setting-item">
+                    <label data-i18n="location_tracking">Location Tracking:</label>
+                    <input type="checkbox" id="locationTracking">
+                </div>
+                <div class="setting-item">
+                    <label data-i18n="auto_categorize">Auto Categorize:</label>
+                    <input type="checkbox" id="autoCategorize" checked>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h2 data-i18n="data_management">Data Management</h2>
+                <div class="setting-item">
+                    <button class="btn-primary" id="exportCsvBtn" data-i18n="export_csv">Export CSV</button>
+                </div>
+                <div class="setting-item">
+                    <button class="btn-primary" id="exportJsonBtn" data-i18n="export_json">Export JSON</button>
+                </div>
+                <div class="setting-item">
+                    <button class="btn-primary" id="exportPdfBtn" data-i18n="export_pdf">Export PDF</button>
+                </div>
+                <div class="setting-item">
+                    <button class="btn-secondary" id="importJsonBtn" data-i18n="import_json">Import JSON</button>
+                    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                </div>
+                <div class="setting-item">
+                    <button class="btn-danger" id="clearDataBtn" data-i18n="clear_data">Clear All Data</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h2 data-i18n="about">About</h2>
+                <div id="appInfo">
+                    <p><strong data-i18n="version">Version:</strong> <span id="appVersion">1.0.0</span></p>
+                    <p><strong data-i18n="install_date">Install Date:</strong> <span id="installDate">-</span></p>
+                    <p><strong data-i18n="total_transactions">Total Transactions:</strong> <span id="totalTransactions">0</span></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FAB -->
+    <button class="fab" id="addTransactionFab" title="Add Transaction" aria-label="Add Transaction">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+    </button>
+
+    <!-- Transaction Modal -->
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-i18n="add_transaction">Add Transaction</h2>
+                <button class="close-btn" id="closeTransactionModal">&times;</button>
+            </div>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label data-i18n="description">Description:</label>
+                    <input type="text" id="transactionDescription" required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="amount">Amount:</label>
+                    <input type="number" id="transactionAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="type">Type:</label>
+                    <select id="transactionType" required>
+                        <option value="expense" data-i18n="expense">Expense</option>
+                        <option value="income" data-i18n="income">Income</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="category">Category:</label>
+                    <select id="transactionCategory" required>
+                        <!-- Categories will be populated here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="date">Date:</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="notes">Notes:</label>
+                    <textarea id="transactionNotes"></textarea>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="receipt">Receipt:</label>
+                    <input type="file" id="transactionReceipt" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="location">Location:</label>
+                    <input type="text" id="transactionLocation">
+                    <button type="button" class="btn-link" id="getCurrentLocation" data-i18n="get_location">Get Current Location</button>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelTransaction" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-i18n="add_category">Add Category</h2>
+                <button class="close-btn" id="closeCategoryModal">&times;</button>
+            </div>
+            <form id="categoryForm">
+                <div class="form-group">
+                    <label data-i18n="name">Name:</label>
+                    <input type="text" id="categoryName" required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="icon">Icon:</label>
+                    <input type="text" id="categoryIcon" placeholder="🏠">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="color">Color:</label>
+                    <input type="color" id="categoryColor" value="#2196F3">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="type">Type:</label>
+                    <select id="categoryType" required>
+                        <option value="expense" data-i18n="expense">Expense</option>
+                        <option value="income" data-i18n="income">Income</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelCategory" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div class="modal" id="budgetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" data-i18n="set_budget">Set Budget</h2>
+                <button class="close-btn" id="closeBudgetModal">&times;</button>
+            </div>
+            <form id="budgetForm">
+                <div class="form-group">
+                    <label data-i18n="category">Category:</label>
+                    <select id="budgetCategory" required>
+                        <!-- Categories will be populated here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="budget_amount">Budget Amount:</label>
+                    <input type="number" id="budgetAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="period">Period:</label>
+                    <select id="budgetPeriod" required>
+                        <option value="monthly" data-i18n="monthly">Monthly</option>
+                        <option value="weekly" data-i18n="weekly">Weekly</option>
+                        <option value="yearly" data-i18n="yearly">Yearly</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelBudget" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

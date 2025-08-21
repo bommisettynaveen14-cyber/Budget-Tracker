@@ -1,0 +1,65 @@
+{
+  "name": "Budget Tracker",
+  "short_name": "Budget Tracker",
+  "description": "A comprehensive offline budget tracker to manage your personal finances",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196F3",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "productivity", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192' fill='%232196F3'%3E%3Cpath d='M96 16C51.2 16 16 51.2 16 96s35.2 80 80 80 80-35.2 80-80-35.2-80-80-80zm11.3 128.7V160h-21.4v-15.4c-13.7-2.9-25.3-11.7-26.2-27.2h15.7c.8 8.4 6.6 15 21.2 15 15.7 0 19.2-7.8 19.2-12.7 0-6.6-3.5-12.9-21.4-17.1-19.8-4.8-33.4-13-33.4-29.4 0-13.8 11.1-22.7 24.9-25.7V32h21.4v15.6c14.9 3.6 22.3 14.9 22.8 27.1H114.4c-.4-8.9-5.1-15-17.8-15-12 0-19.2 5.4-19.2 13.1 0 5.7 3.1 10.9 19.2 14.6 21.6 5 35.4 13.2 35.4 31.5-.1 18.1-13.6 29.1-32.2 31.7z'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%232196F3'%3E%3Cpath d='M256 48C141.6 48 48 141.6 48 256s93.6 208 208 208 208-93.6 208-208S370.4 48 256 48zm30.4 345.9V432h-57.6v-41.4c-36.8-7.8-68.1-31.4-70.4-73.1h42.2c2.1 22.6 17.7 40.3 57 40.3 42.2 0 51.6-21 51.6-34.1 0-17.8-9.4-34.6-57.6-46-53.2-12.9-89.8-34.9-89.8-79 0-37.1 29.8-61 66.9-69.1V88h57.6v41.9c40.1 9.7 59.9 40 61.2 72.9H308c-1.1-23.9-13.7-40.3-47.8-40.3-32.3 0-51 14.5-51 35.2 0 15.3 8.3 29.3 51.6 39.3 58.1 13.4 95.1 35.4 95.1 84.4-.1 48.6-36.5 78.2-86.5 85.1z'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720' fill='none'%3E%3Crect width='540' height='720' fill='%23f8f9fa'/%3E%3Crect x='20' y='60' width='500' height='80' rx='8' fill='%232196F3'/%3E%3Ctext x='30' y='110' fill='white' font-family='Arial' font-size='24' font-weight='bold'%3EBudget Tracker%3C/text%3E%3Crect x='20' y='160' width='160' height='120' rx='8' fill='white'/%3E%3Ctext x='30' y='190' fill='%236c757d' font-family='Arial' font-size='14'%3ETotal Income%3C/text%3E%3Ctext x='30' y='220' fill='%234CAF50' font-family='Arial' font-size='24' font-weight='bold'%3E₹25,000%3C/text%3E%3Crect x='200' y='160' width='160' height='120' rx='8' fill='white'/%3E%3Ctext x='210' y='190' fill='%236c757d' font-family='Arial' font-size='14'%3ETotal Expenses%3C/text%3E%3Ctext x='210' y='220' fill='%23F44336' font-family='Arial' font-size='24' font-weight='bold'%3E₹18,500%3C/text%3E%3Crect x='380' y='160' width='160' height='120' rx='8' fill='white'/%3E%3Ctext x='390' y='190' fill='%236c757d' font-family='Arial' font-size='14'%3ECurrent Balance%3C/text%3E%3Ctext x='390' y='220' fill='%232196F3' font-family='Arial' font-size='24' font-weight='bold'%3E₹6,500%3C/text%3E%3C/svg%3E",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Budget Tracker Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Transaction",
+      "short_name": "Add",
+      "description": "Quickly add a new transaction",
+      "url": "/?action=add",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96' fill='%234CAF50'%3E%3Cpath d='M48 8C25.9 8 8 25.9 8 48s17.9 40 40 40 40-17.9 40-40S70.1 8 48 8zm20 44H52v16h-8V52H28v-8h16V28h8v16h16v8z'/%3E%3C/svg%3E",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "View Charts",
+      "short_name": "Charts",
+      "description": "View expense charts and analytics",
+      "url": "/?tab=charts",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96' fill='%23FF9800'%3E%3Cpath d='M76 76H20V20h8v48h48v8zM32 60v8h8v-8h-8zm12-16v24h8V44h-8zm12-8v32h8V36h-8zm12-12v44h8V24h-8z'/%3E%3C/svg%3E",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}

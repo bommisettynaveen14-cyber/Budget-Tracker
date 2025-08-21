@@ -1,0 +1,57 @@
+I have an existing offline Budget Tracker PWA project with these files:
+- index.html
+- script.js
+- style.css
+- manifest.json
+- service-worker.js
+
+⚠️ Critical Rules:
+1. Do not break or overwrite any existing functionality.  
+   - The current design, structure, and features must remain fully intact.  
+   - Only extend the code with new features.  
+   - No existing code should be removed or refactored in a way that causes errors.  
+
+2. The app must continue to work 100% offline.  
+   - It already uses a service worker + localStorage → keep using the same approach.  
+   - Do not add any online APIs, servers, or databases.  
+   - Do not add redirects or dependencies that require internet access.  
+
+3. Deployment Compatibility:  
+   - The updated version must work on GitHub Pages / Netlify as a PWA.  
+   - It must also work when wrapped into an APK using Kodular or Thunkable.  
+   - After installation, it must still save and load all data only from localStorage on the user’s device.  
+
+✅ New Features to Add:
+1. **Monthly Filter (Monthly View)**:
+   - Add a dropdown or month selector at the top of the Transactions section.  
+   - When the user selects a month, display only the transactions from that month.  
+   - Show a summary for that month: total income, total expenses, and net balance.  
+
+2. **Category-wise Summary**:
+   - Group transactions by category for the selected month.  
+   - For each category, show the number of transactions and total spent/earned.  
+   - Example: “Food – 5 transactions – ₹3200”.  
+   - Display the summary in a clear, card-like format (similar to the existing UI).  
+
+3. **Daily Totals**:
+   - Show totals grouped by date within the selected month.  
+   - Example:  
+     - 21 Aug 2025 → ₹621 (Food: ₹621)  
+     - 22 Aug 2025 → ₹400 (Transport: ₹200, Food: ₹200)  
+
+4. **Charts (Analytics Section)**:
+   - Add a category-wise pie chart (to visualize spending by category).  
+   - Add a monthly bar chart (to visualize total expenses/income across days or categories).  
+   - Use Chart.js or a similar lightweight JS chart library.  
+   - The library must be included locally so charts work fully offline.  
+
+5. **Data Handling**:
+   - All new data must continue to be stored in localStorage only.  
+   - Do not connect to any server or cloud.  
+   - Each user’s data stays private on their own device.  
+   - Existing transactions must not be lost or altered.  
+
+👉 Task:
+Update **only** `index.html` and `script.js` with the above features.  
+Do not modify `style.css`, `manifest.json`, or `service-worker.js`.  
+Return the full, final updated code for `index.html` and `script.js` only, making sure everything works offline without errors or redirects.
